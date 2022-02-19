@@ -92,7 +92,8 @@ func (lex *JsonLexer) Lex() *token.Token {
         *|;
 
         # object
-
+        j_object := |*
+        *|;
 
         # value
         main := |*
