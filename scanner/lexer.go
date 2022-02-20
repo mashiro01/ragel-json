@@ -14,7 +14,9 @@ type JsonLexer struct {
 	top         int
 	stack       []int
 
+	notInArray      bool
 	bracketStack int
+	braceStack   int
 	stacks       *stack.Stack
 
 	tokenPool token.Pool
@@ -22,12 +24,13 @@ type JsonLexer struct {
 
 func NewLexer(data []byte, config config.Config) *JsonLexer {
 	lexer := JsonLexer{
-		data: data,
-		top: 0,
-		pe:   len(data),
+		data:  data,
+		top:   0,
+		pe:    len(data),
 		stack: make([]int, 10),
 
 		bracketStack: 0,
+		braceStack:   0,
 
 		stacks:    stack.NewStack(),
 		tokenPool: *token.NewPool(config.PoolSize),
@@ -38,8 +41,14 @@ func NewLexer(data []byte, config config.Config) *JsonLexer {
 	return &lexer
 }
 
-func (lex *JsonLexer) isEmptyBracketStack() bool {
-	return lex.bracketStack == 0
+func (lex *JsonLexer) isNotInArrayParse() bool {
+	return lex.notInArray
+}
+
+func (lex *JsonLexer) growCallStack() {
+	if lex.top == len(lex.stack) {
+		lex.stack = append(lex.stack, 0)
+	}
 }
 
 func (lex *JsonLexer) addSubToken(tkn *token.Token, id token.ID, start, end int) {
@@ -47,6 +56,20 @@ func (lex *JsonLexer) addSubToken(tkn *token.Token, id token.ID, start, end int)
 
 	newToken.ID = id
 	newToken.Value = lex.data[start:end]
+
+	if lex.bracketStack > 1 {
+		parent := lex.stacks.Peak().(token.StackToken)
+		parent.Token.SubTokens = append(parent.Token.SubTokens, *newToken)
+	} else {
+		tkn.SubTokens = append(tkn.SubTokens, *newToken)
+	}
+}
+
+func (lex *JsonLexer) addSubTokenValue(tkn *token.Token, id token.ID, value string) {
+	newToken := lex.tokenPool.GenBlock()
+
+	newToken.ID = id
+	newToken.Value = []byte(value)
 
 	if lex.bracketStack > 1 {
 		parent := lex.stacks.Peak().(token.StackToken)

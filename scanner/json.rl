@@ -12,11 +12,7 @@ import (
     variable pe lex.pe;
 
     prepush {
-        /* stack growing code */
-    }
-
-    postpop {
-        /* stack shrinking code */
+        lex.growCallStack()
     }
 }%%
 
@@ -30,6 +26,8 @@ func (lex *JsonLexer) Lex() *token.Token {
     tkn := lex.tokenPool.GenBlock()
 
     %%{
+        action is_not_in_array_parse { lex.isNotInArrayParse() }
+
         newline  = ( '\r\n' >(nl, 1) | '\r' >(nl, 0) | '\n' >(nl, 0) );
         any_line = any | newline;
 
@@ -72,6 +70,7 @@ func (lex *JsonLexer) Lex() *token.Token {
         # array
         j_array := |*
             '['                         => {
+                lex.notInArray = false
                 lex.bracketStack += 1
                 lex.pushSubTokenStack(token.J_ARRAY, lex.ts)
             };
@@ -83,7 +82,11 @@ func (lex *JsonLexer) Lex() *token.Token {
                     fret;
                 }
             };
-            ','                         => { };
+            ',' when is_not_in_array_parse => {
+                lex.popSubTokenStack(tkn, lex.te-1)
+                fret;
+            };
+            ',' => {  };
             j_whitespace_newline*       => { };
             j_number                    => { lex.addSubToken(tkn, token.J_NUMBER, lex.ts, lex.te) };
             j_string                    => { lex.addSubToken(tkn, token.J_STRING, lex.ts, lex.te) };
@@ -91,8 +94,33 @@ func (lex *JsonLexer) Lex() *token.Token {
             j_null                      => { lex.addSubToken(tkn, token.J_NULL, lex.ts, lex.te) };
         *|;
 
-        # object
+        j_object_key   = j_string j_whitespace*;
 
+        # object
+        j_object := |*
+            '{' => {
+                lex.braceStack += 1
+                lex.pushSubTokenStack(token.J_OBJECT, lex.ts)
+            };
+            '}' => {
+                lex.braceStack -= 1
+                lex.popSubTokenStack(tkn, lex.te)
+
+                if lex.braceStack == 0 {
+                    fret;
+                }
+            };
+            ',' => { };
+            j_whitespace_newline* => { };
+            j_comment => {
+                lex.addSubToken(tkn, token.J_COMMENT, lex.ts, lex.te)
+            };
+            j_object_key ':' => {
+                lex.pushSubTokenStack(token.J_OBJECT_KEY_VALUE_PAIR, lex.ts)
+                lex.notInArray = true
+                fcall j_array;
+            };
+        *|;
 
         # value
         main := |*
@@ -101,9 +129,15 @@ func (lex *JsonLexer) Lex() *token.Token {
             j_bool   => { tok = token.J_BOOL; fbreak; };
             j_null   => { tok = token.J_NULL; fbreak; };
             '['      => {
-                tok = token.J_ARRAY;
-                lex.bracketStack += 1;
+                tok = token.J_ARRAY
+                lex.bracketStack += 1
                 fcall j_array;
+                fbreak;
+            };
+            '{'      => {
+                tok = token.J_OBJECT
+                lex.braceStack += 1
+                fcall j_object;
                 fbreak;
             };
         *|;

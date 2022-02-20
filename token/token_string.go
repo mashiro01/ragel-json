@@ -14,11 +14,13 @@ func _() {
 	_ = x[J_NULL-3]
 	_ = x[J_ARRAY-4]
 	_ = x[J_OBJECT-5]
+	_ = x[J_COMMENT-6]
+	_ = x[J_OBJECT_KEY_VALUE_PAIR-7]
 }
 
-const _ID_name = "J_NUMBERJ_STRINGJ_BOOLJ_NULLJ_ARRAYJ_OBJECT"
+const _ID_name = "J_NUMBERJ_STRINGJ_BOOLJ_NULLJ_ARRAYJ_OBJECTJ_COMMENTJ_OBJECT_KEY_VALUE_PAIR"
 
-var _ID_index = [...]uint8{0, 8, 16, 22, 28, 35, 43}
+var _ID_index = [...]uint8{0, 8, 16, 22, 28, 35, 43, 52, 75}
 
 func (i ID) String() string {
 	if i < 0 || i >= ID(len(_ID_index)-1) {

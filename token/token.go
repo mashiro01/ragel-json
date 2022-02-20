@@ -7,6 +7,10 @@ const (
 	J_NULL
 	J_ARRAY
 	J_OBJECT
+	J_COMMENT
+
+	// sub item
+	J_OBJECT_KEY_VALUE_PAIR
 )
 
 //go:generate stringer -type ID -output ./token_string.go
