@@ -82,11 +82,12 @@ func (lex *JsonLexer) Lex() *token.Token {
                     fret;
                 }
             };
-            ',' when is_not_in_array_parse => {
-                lex.popSubTokenStack(tkn, lex.te-1)
-                fret;
+            ','  => { };
+            '{' => {
+                lex.braceStack += 1
+                lex.pushSubTokenStack(token.J_OBJECT, lex.ts)
+                fcall j_object;
             };
-            ',' => {  };
             j_whitespace_newline*       => { };
             j_number                    => { lex.addSubToken(tkn, token.J_NUMBER, lex.ts, lex.te) };
             j_string                    => { lex.addSubToken(tkn, token.J_STRING, lex.ts, lex.te) };
@@ -104,13 +105,21 @@ func (lex *JsonLexer) Lex() *token.Token {
             };
             '}' => {
                 lex.braceStack -= 1
-                lex.popSubTokenStack(tkn, lex.te)
+                lex.popSubTokenStack(tkn, lex.te-1)
 
                 if lex.braceStack == 0 {
                     fret;
                 }
             };
-            ',' => { };
+            '[' => {
+                lex.notInArray = false
+                lex.bracketStack += 1
+                lex.pushSubTokenStack(token.J_ARRAY, lex.ts)
+                fcall j_array;
+            };
+            ',' => {
+                lex.popSubTokenStack(tkn, lex.te-1)
+            };
             j_whitespace_newline* => { };
             j_comment => {
                 lex.addSubToken(tkn, token.J_COMMENT, lex.ts, lex.te)
@@ -118,8 +127,12 @@ func (lex *JsonLexer) Lex() *token.Token {
             j_object_key ':' => {
                 lex.pushSubTokenStack(token.J_OBJECT_KEY_VALUE_PAIR, lex.ts)
                 lex.notInArray = true
-                fcall j_array;
+                fcall j_object;
             };
+            j_number                    => { lex.addSubToken(tkn, token.J_NUMBER, lex.ts, lex.te) };
+            j_string                    => { lex.addSubToken(tkn, token.J_STRING, lex.ts, lex.te) };
+            j_bool                      => { lex.addSubToken(tkn, token.J_BOOL, lex.ts, lex.te) };
+            j_null                      => { lex.addSubToken(tkn, token.J_NULL, lex.ts, lex.te) };
         *|;
 
         # value

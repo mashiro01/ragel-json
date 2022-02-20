@@ -1,3 +1,4 @@
-[
-  "123", 123, null, true, false, ["567", 567, [true, false, null, 192.345]]
-]
+{ "Name":"Langshen",
+  "MyWife":[ "LuLu","26", [123, 456] ],
+  "MySon":[{"Name":"Son1"},{"Name":"Son2"},{"Name":"Son3"}]
+}
