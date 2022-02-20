@@ -5,27 +5,27 @@
 ## RoadMap
 
 ### Component
-[x] j_number
-[x] j_string
-[x] j_whitespace
-[x] j_null
-[x] j_boolen
+1. [x] j_number
+2. [x] j_string
+3. [x] j_whitespace
+4. [x] j_null
+5. [x] j_boolen
 
-[ ] j_object
-[x] j_array
-[x] j_value
+6. [ ] j_object
+7. [x] j_array
+8. [x] j_value
 
 ### Unit Test
-[ ] j_object
-[ ] j_array
-[ ] j_number
-[ ] j_string
-[ ] j_whitespace
-[ ] j_null
-[ ] j_boolen
+1. [ ] j_object
+2. [ ] j_array
+3. [ ] j_number
+4. [ ] j_string
+5. [ ] j_whitespace
+6. [ ] j_null
+7. [ ] j_boolen
 
 ### Build
-[ ] Bazel / CMake / Make
+1. [ ] Bazel / CMake / Make
 
 ### TODO
 
