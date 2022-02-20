@@ -48,7 +48,12 @@ func (lex *JsonLexer) addSubToken(tkn *token.Token, id token.ID, start, end int)
 	newToken.ID = id
 	newToken.Value = lex.data[start:end]
 
-	tkn.SubTokens = append(tkn.SubTokens, *newToken)
+	if lex.bracketStack > 1 {
+		parent := lex.stacks.Peak().(token.StackToken)
+		parent.Token.SubTokens = append(parent.Token.SubTokens, *newToken)
+	} else {
+		tkn.SubTokens = append(tkn.SubTokens, *newToken)
+	}
 }
 
 func (lex *JsonLexer) pushSubTokenStack(id token.ID, start int) {

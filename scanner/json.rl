@@ -84,7 +84,7 @@ func (lex *JsonLexer) Lex() *token.Token {
                 }
             };
             ','                         => { };
-            j_whitespace                => { };
+            j_whitespace_newline*       => { };
             j_number                    => { lex.addSubToken(tkn, token.J_NUMBER, lex.ts, lex.te) };
             j_string                    => { lex.addSubToken(tkn, token.J_STRING, lex.ts, lex.te) };
             j_bool                      => { lex.addSubToken(tkn, token.J_BOOL, lex.ts, lex.te) };
@@ -92,8 +92,7 @@ func (lex *JsonLexer) Lex() *token.Token {
         *|;
 
         # object
-        j_object := |*
-        *|;
+
 
         # value
         main := |*

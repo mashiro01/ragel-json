@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"main/config"
 	"main/scanner"
 	"main/token"
@@ -9,11 +11,14 @@ import (
 
 func TravelSubTokens(tokens []token.Token, r int) {
 	if len(tokens) == 0 {
+		r -= 1
 		return
+	} else {
+		r += 1
 	}
 
 	for _, i := range tokens {
-		for t := 0; t < r; t++ {
+		for t := 1; t < r; t++ {
 			fmt.Printf("\t")
 		}
 
@@ -23,11 +28,16 @@ func TravelSubTokens(tokens []token.Token, r int) {
 		TravelSubTokens(i.SubTokens, r)
 	}
 
-	r += 1
+
 }
 
 func main() {
-	data := `[[123, false],[123, "test string", null, true]]`
+	// data := "[\r\n 123," + `"hello"` + "\r\n, [123, \r\n, 789]]"
+	data, err :=ioutil.ReadFile("test.json")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	lex := scanner.NewLexer([]byte(data), config.Config{
 		PoolSize: 10,
 	})
