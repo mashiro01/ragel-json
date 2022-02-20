@@ -2,13 +2,9 @@
 
 最近工作上开始使用ragel来进行语法分析，这里记录下学习过程以及使用ragel完成一个简单的json-parser的流程
 
-## Design
-
-### Whitespace
-
 ## RoadMap
 
-* Component
+### Component
 [x] j_number
 [x] j_string
 [x] j_whitespace
@@ -19,7 +15,7 @@
 [x] j_array
 [x] j_value
 
-* Unit Test
+### Unit Test
 [ ] j_object
 [ ] j_array
 [ ] j_number
@@ -28,7 +24,7 @@
 [ ] j_null
 [ ] j_boolen
 
-* Build
+### Build
 [ ] Bazel / CMake / Make
 
 ### TODO
