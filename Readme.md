@@ -9,34 +9,32 @@
 ## RoadMap
 
 * Component
-    - Single component
-        [x] j_number
-        [x] j_string
-        [x] j_whitespace
-        [x] j_null
-        [x] j_boolen
+[x] j_number
+[x] j_string
+[x] j_whitespace
+[x] j_null
+[x] j_boolen
 
-    - Complex compone
-        [ ] j_object
-        [x] j_array
-        [x] j_value
+[ ] j_object
+[x] j_array
+[x] j_value
 
 * Unit Test
-    [ ] j_object
-    [ ] j_array
-    [ ] j_number
-    [ ] j_string
-    [ ] j_whitespace
-    [ ] j_null
-    [ ] j_boolen
+[ ] j_object
+[ ] j_array
+[ ] j_number
+[ ] j_string
+[ ] j_whitespace
+[ ] j_null
+[ ] j_boolen
 
 * Build
-    [ ] Bazel / CMake / Make
+[ ] Bazel / CMake / Make
 
 ### TODO
 
 1. [x] 完成单个组件的编写
-2. [ ] 完成单组件的单元测试
+2. [x] 完成单组件的单元测试
 3. [x] 组合单组件为Parser整体
 4. [ ] 使用CMake等构建工具完成具体的解析构建
 
